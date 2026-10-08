@@ -1,0 +1,81 @@
+schema_version: 1
+project_root: ${AIC_PROJECT_ROOT}/v5_finetune
+seed: 42
+data:
+  images_dir: ${AIC_DATA_ROOT}/train/images
+  masks_dir: ${AIC_DATA_ROOT}/train/masks
+  train_list: ${AIC_DATA_ROOT}/splits/v1/train.txt
+  val_list: ${AIC_DATA_ROOT}/splits/v1/val.txt
+  aic_selected_list: ${AIC_PROJECT_ROOT}/v5_finetune/manifests/aic_vehicle_top2500.txt
+  loveda_root: ${LOVEDA_ROOT}
+  loveda_rural_list: ${AIC_PROJECT_ROOT}/v5_finetune/manifests/loveda_rural.txt
+  loveda_urban_list: ${AIC_PROJECT_ROOT}/v5_finetune/manifests/loveda_urban.txt
+  image_size: 1024
+  original_count: 5464
+  aic_selected_count: 2500
+  loveda_count: 2522
+  train_count: 5022
+  val_count: 1368
+model:
+  backbone: facebook/dinov3-vitl16-pretrain-lvd1689m
+  backbone_weights: ${DINOV3_WEIGHTS}
+  interaction_indexes: [4, 11, 17, 23]
+  adapter_pretrain_size: 1024
+  adapter_conv_inplane: 64
+  adapter_deform_heads: 16
+  adapter_drop_path: 0.0
+  hidden_dim: 256
+  mask_dim: 256
+  conv_dim: 256
+  pixel_decoder_encoder_layers: 6
+  pixel_decoder_attention_heads: 8
+  pixel_decoder_ffn_dim: 1024
+  transformer_decoder_layers: 9
+  transformer_decoder_attention_heads: 8
+  transformer_decoder_ffn_dim: 2048
+  num_queries: 100
+  num_classes: 8
+  common_stride: 4
+  dropout: 0.0
+loss:
+  class_weight: 2.0
+  semantic_class_weights: [1.0, 1.0, 1.0, 1.0, 1.5, 1.0, 1.0, 1.0]
+  mask_weight: 5.0
+  dice_weight: 5.0
+  no_object_weight: 0.1
+  num_points: 12544
+  oversample_ratio: 3.0
+  importance_sample_ratio: 0.75
+training:
+  output_dir: ${AIC_OUTPUT_ROOT}/dinov3_vitl16_m2f_loveda_vehicle_mix_v5_resume15
+  max_epochs: 50
+  patience: 10
+  optimizer: AdamW
+  learning_rate: 0.0001
+  weight_decay: 0.05
+  warmup_epochs: 3
+  warmup_start_factor: 0.001
+  scheduler: polynomial
+  poly_power: 0.9
+  min_learning_rate: 0.000001
+  target_effective_batch: 3
+  physical_batch_size: 3
+  num_workers: 8
+  drop_last: false
+  bf16: true
+  gradient_clip_norm: 1.0
+augmentation:
+  enabled: true
+  small_barren_ratio_max: 0.01479625702
+  medium_barren_ratio_max: 0.04709005356
+  crop_probability: 0.70
+  small_crop_size: 512
+  medium_crop_size: 768
+sampling:
+  barren_weighted: true
+selection:
+  barren_min_miou: 0.792
+validation:
+  batch_size: 1
+  query_chunk: 20
+  loss_seed: 20260918

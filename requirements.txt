@@ -1,0 +1,8 @@
+torch
+numpy
+Pillow
+PyYAML
+scipy
+tqdm
+pytest
+

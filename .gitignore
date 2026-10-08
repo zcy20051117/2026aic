@@ -1,0 +1,21 @@
+*.pth
+*.pt
+*.ckpt
+data/
+datasets/
+manifests/
+outputs/
+logs/
+*.zip
+*.tar.gz
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.bak.*
+.env
+ssh*.txt
+*.pem
+id_*
+
+# Local data-specific configuration
+.env.local
